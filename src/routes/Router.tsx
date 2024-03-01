@@ -1,8 +1,7 @@
 import { Routes, Route } from "react-router-dom"
-import Landing from "../pages/Landing"
-import Register from "../pages/auth/Register"
-import Login from "../pages/auth/Login"
-import NotFound from "../pages/NotFoundPage/NotFound"
+import { Register, Login } from "../pages/auth"
+import { Landing, NotFound } from "../pages"
+
 
 const Router = () => {
   return (

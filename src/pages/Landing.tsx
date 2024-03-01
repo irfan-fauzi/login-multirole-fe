@@ -2,7 +2,9 @@ import { FC } from 'react'
 
 const Landing:FC = () => {
   return (
-    <div>Landing</div>
+    <>
+      <h1>Landing</h1>
+    </>
   )
 }
 
