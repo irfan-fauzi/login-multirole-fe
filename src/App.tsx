@@ -1,11 +1,12 @@
+import { BrowserRouter } from "react-router-dom";
+import Router from "./routes/Router";
 
 function App() {
-
   return (
-    <>
-     <p className="text-red-400">halo</p>
-    </>
-  )
+    <BrowserRouter>
+      <Router />
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;
