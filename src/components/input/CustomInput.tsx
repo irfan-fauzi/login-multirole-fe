@@ -2,7 +2,6 @@ import { FC, InputHTMLAttributes } from "react";
 
 interface CustomInputAttributes extends InputHTMLAttributes<HTMLInputElement> {
   name: string;
-  type: string;
   placeholder?: string | undefined
   label?: string | null;
   error?: string | null;
@@ -11,7 +10,6 @@ interface CustomInputAttributes extends InputHTMLAttributes<HTMLInputElement> {
 
 const CustomInput: FC<CustomInputAttributes> = ({
   name,
-  type,
   label,
   error,
   required,
@@ -22,7 +20,6 @@ const CustomInput: FC<CustomInputAttributes> = ({
     <div>
       <label htmlFor={name} className={`text-sm text-slate-400 ${error ? 'text-error' : ''}`}>{label}</label>
       <input
-        type={type}
         name={name}
         placeholder={placeholder}
         className={`input input-bordered input-primary w-full ${error ? 'input-error' : '' }`}
