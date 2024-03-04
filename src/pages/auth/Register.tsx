@@ -1,5 +1,7 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useState } from "react";
 import { CustomInput } from "../../components";
+import { useNavigate } from "react-router-dom";
+
 
 interface DataRegister {
   name?: string | null;
@@ -9,6 +11,7 @@ interface DataRegister {
 }
 
 const Register: FC = () => {
+  const navigate = useNavigate()
   const [data, setData] = useState<DataRegister>({
     name: "",
     email: "",
@@ -100,9 +103,9 @@ const Register: FC = () => {
           Register
         </button>
         <p className='text-center mt-5'>Already have an account ?</p>
-        <p className='text-center mt-8'>
+        <p className='text-center mt-8 cursor-pointer'>
           <a
-            href='/auth/login'
+            onClick={() => navigate('/auth/login')}
             className='text-blue-400 border border-blue-300 rounded-lg hover:bg-blue-300 hover:text-white transition-all px-8 py-3'
           >
             Login
