@@ -1,6 +1,7 @@
 import { FC, useState } from "react";
 import { CustomInput } from "../../components";
 import { useNavigate } from "react-router-dom";
+import InputValidation from "../../helper/InputValidation";
 
 interface DataLogin {
   email?: string | null;
@@ -23,21 +24,62 @@ const Login: FC = () => {
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     const { value, name } = e.target;
+
+    let strErr = "";
+    if (name === "email") {
+      strErr = InputValidation.EmailValidation(value, 100, "Email", true);
+    }
+    if (name === "password") {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      strErr = InputValidation.PasswordValidation(
+        value,
+        4,
+        12,
+        "Password",
+        true
+      );
+    }
     setData({
       ...data,
       [name]: value,
+    });
+    setErrData({
+      ...errData,
+      [name]: strErr,
     });
   };
   /* ------------------------------ end on change ----------------------------- */
 
   /* -------------------------------- on submit ------------------------------- */
-
   const onSubmit = () => {
-    console.log(data);
+    const valid = onValidation();
+    console.log(valid)
   };
-
   /* ------------------------------ end-onsubmit ------------------------------ */
 
+  // on Validation
+  const onValidation = () => {
+    const tempValidation: DataLogin = {
+      email: InputValidation.EmailValidation(data.email, 100, "Email", true),
+      password: InputValidation.PasswordValidation(
+        data.password,
+        4,
+        12,
+        "Password",
+        true
+      ),
+    };
+    setErrData(tempValidation);
+
+    // eslint-disable-next-line prefer-const
+    for (let key in tempValidation) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      if ((tempValidation as any)[key] !== "") {
+        return false;
+      }
+    }
+    return true;
+  };
   return (
     <div className='w-full'>
       <h1 className='text-2xl text-center mt-20'>Login</h1>

@@ -1,7 +1,7 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { CustomInput } from "../../components";
 import { useNavigate } from "react-router-dom";
-
+import InputValidation from "../../helper/InputValidation";
 
 interface DataRegister {
   name?: string | null;
@@ -11,7 +11,7 @@ interface DataRegister {
 }
 
 const Register: FC = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [data, setData] = useState<DataRegister>({
     name: "",
     email: "",
@@ -26,26 +26,51 @@ const Register: FC = () => {
     confirmPassword: "",
   });
 
-   /* -------------------------------- On Change ------------------------------- */
+  /* -------------------------------- On Change ------------------------------- */
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault();
     const { value, name } = e.target;
+    let strErr = "";
+    if (name === "email") {
+      strErr = InputValidation.EmailValidation(value, 100, "Email", true);
+    }
+    if (name === "name") {
+      strErr = InputValidation.Textvalidation(value, 100, "Name", true);
+    }
+    if (name === "password") {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
+      strErr = InputValidation.PasswordValidation(
+        value,
+        4,
+        12,
+        "Password",
+        true
+      );
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    }
+    console.log(data);
+
+    setErrData({
+      ...errData,
+      [name]: strErr,
+    });
     setData({
       ...data,
       [name]: value,
     });
-   
+
+    e.preventDefault();
   };
   /* ------------------------------ end on change ----------------------------- */
 
-  
   /* -------------------------------- on submit ------------------------------- */
 
   const onSubmit = () => {
-    console.log(data)
-  }
+    console.log(data);
+  };
 
-/* ------------------------------ end-onsubmit ------------------------------ */
+  /* ------------------------------ end-onsubmit ------------------------------ */
+
 
   return (
     <div className='w-full'>
@@ -88,7 +113,7 @@ const Register: FC = () => {
           />
         </div>
         <div className='mb-3'>
-        <CustomInput
+          <CustomInput
             name='confirmPassword'
             label='confirm password'
             type='password'
@@ -96,16 +121,19 @@ const Register: FC = () => {
             required={true}
             onChange={onChange}
             value={data.confirmPassword ?? ""}
-            error={errData.password}
+            error={errData.confirmPassword}
           />
         </div>
-        <button onClick={onSubmit} className='btn btn-info text-white w-full text-lg mt-5'>
+        <button
+          onClick={onSubmit}
+          className='btn btn-info text-white w-full text-lg mt-5'
+        >
           Register
         </button>
         <p className='text-center mt-5'>Already have an account ?</p>
         <p className='text-center mt-8 cursor-pointer'>
           <a
-            onClick={() => navigate('/auth/login')}
+            onClick={() => navigate("/auth/login")}
             className='text-blue-400 border border-blue-300 rounded-lg hover:bg-blue-300 hover:text-white transition-all px-8 py-3'
           >
             Login
