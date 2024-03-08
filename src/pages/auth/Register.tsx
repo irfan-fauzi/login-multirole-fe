@@ -1,7 +1,9 @@
 import { FC, useState } from "react";
+import Swal from "sweetalert2";
 import { CustomInput } from "../../components";
 import { useNavigate } from "react-router-dom";
 import InputValidation from "../../helper/InputValidation";
+
 
 interface DataRegister {
   name?: string | null;
@@ -83,7 +85,18 @@ const Register: FC = () => {
   const onSubmit = () => {
     const valid = onValidation()
     if(valid) {
-      console.log(data)
+      Swal.fire({
+        icon: "question",
+        showDenyButton: true,
+        text: "Apakah data sudah benar ?",
+        confirmButtonText: "ya",
+        denyButtonText: "tidak"
+      }).then((result) => {
+        if(result.isConfirmed){
+          Swal.fire("Saved", "", "success")
+          console.log(data)
+        }
+      })
     }
   };
 
