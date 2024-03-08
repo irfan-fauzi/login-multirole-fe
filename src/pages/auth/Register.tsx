@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useState } from "react";
 import { CustomInput } from "../../components";
 import { useNavigate } from "react-router-dom";
 import InputValidation from "../../helper/InputValidation";
@@ -37,18 +37,12 @@ const Register: FC = () => {
       strErr = InputValidation.Textvalidation(value, 100, "Name", true);
     }
     if (name === "password") {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-
-      strErr = InputValidation.PasswordValidation(
-        value,
-        4,
-        12,
-        "Password",
-        true
-      );
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      strErr = InputValidation.PasswordValidation(value,4,12,"Password",true);
     }
-    console.log(data);
+
+    if (name === "confirmPassword"){
+     strErr = value === data.password ? "" : "harus sama" 
+    }
 
     setErrData({
       ...errData,
@@ -63,10 +57,34 @@ const Register: FC = () => {
   };
   /* ------------------------------ end on change ----------------------------- */
 
+  // -------- on validation
+  const onValidation = () => {
+    const tempValidation:DataRegister = {
+      name: InputValidation.Textvalidation(data.name, 100, "Name", true),
+      email: InputValidation.EmailValidation(data.email, 100, "Email", true),
+      password: InputValidation.PasswordValidation(data.password, 4, 12, "Password", true),
+      confirmPassword: data.confirmPassword === data.password ? "" : "harus sama" 
+    }
+    setErrData(tempValidation)
+    // eslint-disable-next-line prefer-const
+    for (let key in tempValidation) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      if ((tempValidation as any)[key] !== "") {
+        return false;
+      }
+    }
+    return true;
+  }
+  // ---------------------------
+
+
   /* -------------------------------- on submit ------------------------------- */
 
   const onSubmit = () => {
-    console.log(data);
+    const valid = onValidation()
+    if(valid) {
+      console.log(data)
+    }
   };
 
   /* ------------------------------ end-onsubmit ------------------------------ */

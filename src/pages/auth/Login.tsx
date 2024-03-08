@@ -53,12 +53,15 @@ const Login: FC = () => {
   /* -------------------------------- on submit ------------------------------- */
   const onSubmit = () => {
     const valid = onValidation();
-    console.log(valid)
+    if(valid){
+      console.log(data)
+    }
+    
   };
   /* ------------------------------ end-onsubmit ------------------------------ */
 
   // on Validation
-  const onValidation = () => {
+  const onValidation = ():boolean => {
     const tempValidation: DataLogin = {
       email: InputValidation.EmailValidation(data.email, 100, "Email", true),
       password: InputValidation.PasswordValidation(
