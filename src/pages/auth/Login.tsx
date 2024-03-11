@@ -1,7 +1,10 @@
 import { FC, useState } from "react";
+import Swal from "sweetalert2";
 import { CustomInput } from "../../components";
 import { useNavigate } from "react-router-dom";
 import InputValidation from "../../helper/InputValidation";
+import Http from "../../helper/Fetch";
+import LoadingScreen from "../../components/layouts/LoadingScreen";
 
 interface DataLogin {
   email?: string | null;
@@ -10,6 +13,7 @@ interface DataLogin {
 
 const Login: FC = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   const [data, setData] = useState<DataLogin>({
     email: "",
     password: "",
@@ -33,7 +37,7 @@ const Login: FC = () => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       strErr = InputValidation.PasswordValidation(
         value,
-        4,
+        8,
         12,
         "Password",
         true
@@ -53,20 +57,44 @@ const Login: FC = () => {
   /* -------------------------------- on submit ------------------------------- */
   const onSubmit = () => {
     const valid = onValidation();
-    if(valid){
-      console.log(data)
+    if (valid) {
+      Login();
     }
-    
+  };
+
+  const Login = async () => {
+    setLoading(true);
+    try {
+      const res = await Http.post("/user/login", data, {
+        withCredentials: true,
+      });
+      console.log(res);
+      setData({
+        ...data,
+        email: "",
+        password: "",
+      });
+      setLoading(false);
+      navigate('/dashboard')
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      Swal.fire({
+        icon: "error",
+        text: "Unautorized",
+        title: "Oopss",
+      });
+      setLoading(false);
+    }
   };
   /* ------------------------------ end-onsubmit ------------------------------ */
 
   // on Validation
-  const onValidation = ():boolean => {
+  const onValidation = (): boolean => {
     const tempValidation: DataLogin = {
       email: InputValidation.EmailValidation(data.email, 100, "Email", true),
       password: InputValidation.PasswordValidation(
         data.password,
-        4,
+        8,
         12,
         "Password",
         true
@@ -83,7 +111,10 @@ const Login: FC = () => {
     }
     return true;
   };
-  return (
+
+  return loading ? (
+    <LoadingScreen />
+  ) : (
     <div className='w-full'>
       <h1 className='text-2xl text-center mt-20'>Login</h1>
       <div className='max-w-sm mx-auto px-2'>
