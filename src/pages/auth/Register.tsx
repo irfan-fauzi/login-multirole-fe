@@ -3,6 +3,7 @@ import Swal from "sweetalert2";
 import { CustomInput } from "../../components";
 import { useNavigate } from "react-router-dom";
 import InputValidation from "../../helper/InputValidation";
+import Http from "../../helper/Fetch";
 
 
 interface DataRegister {
@@ -39,7 +40,7 @@ const Register: FC = () => {
       strErr = InputValidation.Textvalidation(value, 100, "Name", true);
     }
     if (name === "password") {
-      strErr = InputValidation.PasswordValidation(value,4,12,"Password",true);
+      strErr = InputValidation.PasswordValidation(value,8,12,"Password",true);
     }
 
     if (name === "confirmPassword"){
@@ -64,7 +65,7 @@ const Register: FC = () => {
     const tempValidation:DataRegister = {
       name: InputValidation.Textvalidation(data.name, 100, "Name", true),
       email: InputValidation.EmailValidation(data.email, 100, "Email", true),
-      password: InputValidation.PasswordValidation(data.password, 4, 12, "Password", true),
+      password: InputValidation.PasswordValidation(data.password, 8, 12, "Password", true),
       confirmPassword: data.confirmPassword === data.password ? "" : "harus sama" 
     }
     setErrData(tempValidation)
@@ -93,12 +94,26 @@ const Register: FC = () => {
         denyButtonText: "tidak"
       }).then((result) => {
         if(result.isConfirmed){
-          Swal.fire("Saved", "", "success")
-          console.log(data)
+          SignUp()
         }
       })
     }
   };
+
+  const SignUp =  async () => {
+    try {
+      const res = await Http.post("/user/register", data)
+      console.log(res)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error:any) {
+      Swal.fire({
+        title: "Ada kesalahan",
+        icon: "error",
+        text: error?.response?.data?.errors?.errors?.email[0]
+      })
+     
+    }
+  }
 
   /* ------------------------------ end-onsubmit ------------------------------ */
 
