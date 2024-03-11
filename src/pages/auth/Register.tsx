@@ -4,7 +4,7 @@ import { CustomInput } from "../../components";
 import { useNavigate } from "react-router-dom";
 import InputValidation from "../../helper/InputValidation";
 import Http from "../../helper/Fetch";
-
+import LoadingScreen from "../../components/layouts/LoadingScreen";
 
 interface DataRegister {
   name?: string | null;
@@ -15,13 +15,13 @@ interface DataRegister {
 
 const Register: FC = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   const [data, setData] = useState<DataRegister>({
     name: "",
     email: "",
     password: "",
     confirmPassword: "",
   });
-
   const [errData, setErrData] = useState<DataRegister>({
     name: "",
     email: "",
@@ -29,6 +29,7 @@ const Register: FC = () => {
     confirmPassword: "",
   });
 
+  
   /* -------------------------------- On Change ------------------------------- */
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value, name } = e.target;
@@ -40,11 +41,17 @@ const Register: FC = () => {
       strErr = InputValidation.Textvalidation(value, 100, "Name", true);
     }
     if (name === "password") {
-      strErr = InputValidation.PasswordValidation(value,8,12,"Password",true);
+      strErr = InputValidation.PasswordValidation(
+        value,
+        8,
+        12,
+        "Password",
+        true
+      );
     }
 
-    if (name === "confirmPassword"){
-     strErr = value === data.password ? "" : "harus sama" 
+    if (name === "confirmPassword") {
+      strErr = value === data.password ? "" : "harus sama";
     }
 
     setErrData({
@@ -60,15 +67,22 @@ const Register: FC = () => {
   };
   /* ------------------------------ end on change ----------------------------- */
 
-  // -------- on validation
+  // -------- on validation ----------------------------------------------------
   const onValidation = () => {
-    const tempValidation:DataRegister = {
+    const tempValidation: DataRegister = {
       name: InputValidation.Textvalidation(data.name, 100, "Name", true),
       email: InputValidation.EmailValidation(data.email, 100, "Email", true),
-      password: InputValidation.PasswordValidation(data.password, 8, 12, "Password", true),
-      confirmPassword: data.confirmPassword === data.password ? "" : "harus sama" 
-    }
-    setErrData(tempValidation)
+      password: InputValidation.PasswordValidation(
+        data.password,
+        8,
+        12,
+        "Password",
+        true
+      ),
+      confirmPassword:
+        data.confirmPassword === data.password ? "" : "harus sama",
+    };
+    setErrData(tempValidation);
     // eslint-disable-next-line prefer-const
     for (let key in tempValidation) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -77,48 +91,50 @@ const Register: FC = () => {
       }
     }
     return true;
-  }
-  // ---------------------------
-
+  };
+  // ----------------------------------------------------------------------------
 
   /* -------------------------------- on submit ------------------------------- */
 
   const onSubmit = () => {
-    const valid = onValidation()
-    if(valid) {
+    const valid = onValidation();
+    if (valid) {
       Swal.fire({
         icon: "question",
         showDenyButton: true,
         text: "Apakah data sudah benar ?",
         confirmButtonText: "ya",
-        denyButtonText: "tidak"
+        denyButtonText: "tidak",
       }).then((result) => {
-        if(result.isConfirmed){
-          SignUp()
+        if (result.isConfirmed) {
+          SignUp();
         }
-      })
+      });
     }
   };
 
-  const SignUp =  async () => {
+  const SignUp = async () => {
+    setLoading(true)
     try {
-      const res = await Http.post("/user/register", data)
-      console.log(res)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error:any) {
+      const res = await Http.post("/user/register", data);
+      console.log(res);
+      setLoading(false)
+      navigate("/auth/login")
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      setLoading(false)
       Swal.fire({
         title: "Ada kesalahan",
         icon: "error",
-        text: error?.response?.data?.errors?.errors?.email[0]
-      })
-     
+        text: error?.response?.data?.errors?.errors?.email[0],
+      });
     }
-  }
+  };
 
   /* ------------------------------ end-onsubmit ------------------------------ */
-
-
-  return (
+  return loading ? (
+    <LoadingScreen />
+  ) : (
     <div className='w-full'>
       <h1 className='text-2xl text-center mt-20'>Sign Up</h1>
       <div className='max-w-sm mx-auto px-2'>
