@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 import InputValidation from "../../helper/InputValidation";
 import Http from "../../helper/Fetch";
 import LoadingScreen from "../../components/layouts/LoadingScreen";
+import AuthUser from "../../helper/AuthUser";
+import AuthAttributes from "../../interface/AuthUserInterface";
 
 interface DataLogin {
   email?: string | null;
@@ -68,14 +70,24 @@ const Login: FC = () => {
       const res = await Http.post("/user/login", data, {
         withCredentials: true,
       });
-      console.log(res);
+      const resData: AuthAttributes = {
+        id: res.data?.data?.id,
+        email: res.data?.data?.email,
+        name: res.data?.data?.name,
+        roleId: res.data?.data?.roleId,
+        token: res.data?.data?.token,
+        menuAccess: res.data?.data?.menuAccess,
+      };
+      console.log(resData)
       setData({
         ...data,
         email: "",
         password: "",
       });
+
+      AuthUser.SetAuth(resData)
       setLoading(false);
-      navigate('/dashboard')
+      navigate("/dashboard");
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       Swal.fire({
