@@ -11,11 +11,10 @@ const Dashboard: FC = () => {
           Authorization: `Bearer ${user?.token}`,
         },
       });
-   
 
-      console.log(res);
+      console.log(res.data);
     } catch (error) {
-      console.log(`ada error ${error}`);
+      console.log(error)
     }
   };
 
