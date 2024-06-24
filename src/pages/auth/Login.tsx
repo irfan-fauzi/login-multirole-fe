@@ -78,7 +78,7 @@ const Login: FC = () => {
         token: res.data?.data?.token,
         menuAccess: res.data?.data?.menuAccess,
       };
-      console.log(resData)
+      
       setData({
         ...data,
         email: "",
