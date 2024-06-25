@@ -12,9 +12,9 @@ const Dashboard: FC = () => {
         },
       });
 
-      console.log(res.data);
+      console.log(res.data.data);
     } catch (error) {
-      console.log(error)
+      console.log(`ada error ${error}`)
     }
   };
 

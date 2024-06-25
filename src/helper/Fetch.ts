@@ -20,13 +20,15 @@ Http.interceptors.request.use(
       const decoded: any = currentToken && jwtDecode(currentToken);
       const expired = decoded?.exp;
       const currentDate = new Date();
-      if (expired * 1000 < currentDate.getDate()) {
+      
+      if (expired * 1000 < currentDate.getTime()) {
         const resData = await Http.get(
           "http://localhost:5000/user/refresh-token",
           {
             withCredentials: true,
           }
         );
+        
         const response: AuthAttributes = {
           id: resData.data?.data?.id,
           email: resData.data?.data?.email,
